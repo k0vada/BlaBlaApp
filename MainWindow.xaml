@@ -1,0 +1,51 @@
+﻿<Window x:Class="BlaBlaApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlaBlaApp" xmlns:viewmodel="clr-namespace:BlaBlaApp.ViewModel" d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+   
+    <Grid>
+        <Border BorderThickness="1" BorderBrush="Black">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="1*"/>
+
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Введите дату начала" VerticalAlignment="Center" Margin="10"/>
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Введите дату окончания:" VerticalAlignment="Center" Margin="10"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Статья:" VerticalAlignment="Center" Margin="10"/>
+
+                <DatePicker Name ="DateFrom" Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" SelectedDate="{Binding DateFrom}"/>
+                <DatePicker Name ="DateTo" Grid.Row="0" Grid.Column="3" Height="30" SelectedDate="{Binding DateTo}"/>
+                <TextBox Name ="Article" Text="{Binding Article, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Height="30" />
+
+                <DataGrid Grid.Row="2" Grid.ColumnSpan="4" x:Name="dataGrid" CanUserAddRows="True"
+                  AutoGenerateColumns="True" HorizontalAlignment="Center" VerticalAlignment="Center" IsReadOnly="True"> </DataGrid>
+
+                <Button Name="StartBtn" Grid.Column="0" Grid.Row="5" Content="Загрузить">
+                    <Button.Command>
+                        <Binding Path="StartParsingCommand" Mode="OneWay"/>
+                    </Button.Command>
+                </Button>
+                
+                <Button Name ="UpdateBtn" Grid.Column="1" Grid.Row="5" Content="Обновить"/>
+                <Button Name ="ReportBtn" Grid.Column="2" Grid.Row="5" Content="Построить график"/>
+                <Button Name ="GraphBtn" Grid.Column="3" Grid.Row="5" Content="Создать отчет"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
