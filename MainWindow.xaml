@@ -33,8 +33,34 @@
                 <DatePicker Name ="DateTo" Grid.Row="0" Grid.Column="3" Height="30" SelectedDate="{Binding DateTo}"/>
                 <TextBox Name ="Article" Text="{Binding Article, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Grid.Column="1" Height="30" />
 
+                
                 <DataGrid Grid.Row="2" Grid.ColumnSpan="4" x:Name="dataGrid" CanUserAddRows="True" ItemsSource="{Binding CaseList}"
-                  AutoGenerateColumns="True" HorizontalAlignment="Center" VerticalAlignment="Center" IsReadOnly="True"> </DataGrid>
+          AutoGenerateColumns="False" HorizontalAlignment="Center" VerticalAlignment="Center" IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Number" Binding="{Binding Number}" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding Type}" />
+                        <DataGridTextColumn Header="Instance" Binding="{Binding Instance}" />
+                        <DataGridTextColumn Header="Subject" Binding="{Binding Subject}" />
+                        <DataGridTextColumn Header="Result" Binding="{Binding Result}" />
+                        <DataGridTextColumn Header="Court Name" Binding="{Binding Court.Name}" />
+                        <DataGridTextColumn Header="Judge" Binding="{Binding Court.Judge}" />
+                        <!-- Для Articles, вы можете использовать DataGridTemplateColumn и внутри него ItemsControl для отображения списка статей -->
+                        <DataGridTemplateColumn Header="Articles">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ItemsControl ItemsSource="{Binding Articles}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
 
                 <Button Name="StartBtn" Grid.Column="0" Grid.Row="5" Content="Загрузить">
                     <Button.Command>

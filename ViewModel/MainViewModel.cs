@@ -112,23 +112,26 @@ namespace BlaBlaApp.ViewModel
                 {
                     using (var db = new dbContext())
                     {
-                        var CasesInDB = db.Cases
-                                         .OrderBy(x => x.Number);
+                        // Получение данных из базы данных
+                        var CasesInDB = db.Cases.OrderBy(x => x.Number).ToList();
 
+                        // Создание нового списка Case
                         CaseList = CasesInDB.Select(x => new Case
                         {
                             Number = x.Number,
                             Type = x.Type,
                             Instance = x.Instance,
                             Subject = x.Subject,
-                            Result = x.Result
+                            Result = x.Result,
+                            Court = x.Court,
+                            Articles = x.Articles
                         }).ToList();
                     }
                 });
                 return getCases;
-
             }
         }
+
 
         private async Task StartParsing()
         {
@@ -137,9 +140,11 @@ namespace BlaBlaApp.ViewModel
                 parser = new Parser();
             }
 
+
             await parser.ParseData(DateFrom, DateTo, Article);
 
-        
+            GetCases.Execute(null);
+
         }
 
         private bool CanStartParsing()
