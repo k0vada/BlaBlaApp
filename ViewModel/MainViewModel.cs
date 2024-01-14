@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
+
 namespace BlaBlaApp.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
@@ -88,6 +89,47 @@ namespace BlaBlaApp.ViewModel
             }
         }
 
+        private List<Case> caseList;
+        public List<Case> CaseList
+        {
+            get
+            {
+                return caseList;
+            }
+            set
+            {
+                caseList = value;
+                OnPropertyChanged("CaseList");
+            }
+        }
+
+        private Command getCases;
+        public Command GetCases
+        {
+            get
+            {
+                getCases = new Command(obj =>
+                {
+                    using (var db = new dbContext())
+                    {
+                        var CasesInDB = db.Cases
+                                         .OrderBy(x => x.Number);
+
+                        CaseList = CasesInDB.Select(x => new Case
+                        {
+                            Number = x.Number,
+                            Type = x.Type,
+                            Instance = x.Instance,
+                            Subject = x.Subject,
+                            Result = x.Result
+                        }).ToList();
+                    }
+                });
+                return getCases;
+
+            }
+        }
+
         private async Task StartParsing()
         {
             if (parser == null)
@@ -97,13 +139,7 @@ namespace BlaBlaApp.ViewModel
 
             await parser.ParseData(DateFrom, DateTo, Article);
 
-            var result = string.Empty;
-            foreach (var pair in parser.GetResults())
-            {
-                result += $"{pair.Key}={pair.Value}\r\n";
-            }
-
-            MessageBox.Show(result);
+        
         }
 
         private bool CanStartParsing()
