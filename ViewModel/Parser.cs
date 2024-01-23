@@ -37,29 +37,19 @@ namespace BlaBlaApp.ViewModel
                 }
                 catch (Exception)
                 {
-                    await Task.Delay(2000);
+                    await Task.Delay(4000);
                 }
             }
             await Task.Delay(2000);
-
             driver.FindElement(By.CssSelector(".date-filter-from")).SendKeys(dateFrom.ToString("d"));
-
             await Task.Delay(500);
-
             driver.FindElement(By.CssSelector(".date-filter-to")).SendKeys(dateTo.ToString("d"));
-
             await Task.Delay(500);
-
             driver.FindElement(By.XPath("//input[@placeholder='Введите статью или категорию дела']")).SendKeys(article);
-
             await Task.Delay(500);
-
             driver.FindElement(By.XPath("//input[@id='searchFormButton']")).Click();
-
-            await Task.Delay(4000);
-
+            await Task.Delay(10000);
             driver.FindElement(By.XPath("//a[contains(.,'Уголовное дело')]")).Click();
-
             await Task.Delay(1000);
 
             var oldNumber = string.Empty;
@@ -90,22 +80,29 @@ namespace BlaBlaApp.ViewModel
                 if(_court == "Не заполнено")
                     _court = driver.FindElement(By.XPath("(//a[@data-pos='0'])[1]")).GetAttribute("textContent");
                 var _judge = driver.FindElement(By.XPath("(//a[@data-pos='0'])[2]")).GetAttribute("textContent");
+
                 using (var context = new dbContext())
                 {
-                    // Создание нового объекта Court
-                    Court Court = new Court()
+                    Court Court = context.Courts.FirstOrDefault(c => c.Name == _court && c.Judge == _judge);
+                    if (Court == null)
                     {
-                        Name = _court,
-                        Judge = _judge
-                    };
-                    context.Courts.Add(Court);
+                        Court = new Court()
+                        {
+                            Name = _court,
+                            Judge = _judge
+                        };
+                        context.Courts.Add(Court);
+                    }
+                    else
+                    {
+                        Court.Name = _court;
+                        Court.Judge = _judge;
+                    }
+                        
 
-                    // Проверка, существует ли уже дело с таким номером
                     var existingCase = context.Cases.FirstOrDefault(c => c.Number == _number);
-
                     if (existingCase == null)
                     {
-                        // Создание нового объекта Case
                         existingCase = new Case()
                         {
                             Number = _number,
@@ -119,7 +116,6 @@ namespace BlaBlaApp.ViewModel
                     }
                     else
                     {
-                        // Обновление существующего дела
                         existingCase.Type = _type;
                         existingCase.Instance = _instance;
                         existingCase.Subject = _subject;
@@ -127,16 +123,12 @@ namespace BlaBlaApp.ViewModel
                         existingCase.Court = Court;
                     }
 
-                    // Разбивка строки articles на отдельные статьи
-                    var articleNames = _articles.Split(';');
+                    var articleNames = _articles.Split(';'); // разбивка строки articles на отдельные статьи
 
-                    // Для каждой статьи в articleNames
                     foreach (var articleName in articleNames)
                     {
-                        // Поиск существующей статьи в базе данных
-                        var Article = context.Articles.FirstOrDefault(a => a.Name == articleName.Trim());
-
-                        // Если статья не найдена, создание новой статьи
+                        var Article = context.Articles.FirstOrDefault(a => a.Name == articleName.Trim()); // поиск существующей статьи в базе данных
+                        
                         if (Article == null)
                         {
                             Article = new Article()
@@ -145,8 +137,6 @@ namespace BlaBlaApp.ViewModel
                             };
                             context.Articles.Add(Article);
                         }
-
-                        // Добавление статьи к делу
                         existingCase.Articles.Add(Article);
                     }
                     context.SaveChanges();
@@ -160,12 +150,12 @@ namespace BlaBlaApp.ViewModel
                     try
                     {
                         driver.FindElement(By.XPath("(//span[@title='Вперед'])[3]")).Click();
-                        await Task.Delay(2000);
+                        await Task.Delay(1000);
                         break;
                     }
                     catch (Exception)
                     {
-                        await Task.Delay(2000);
+                        await Task.Delay(1000);
                     }
                 }
             }

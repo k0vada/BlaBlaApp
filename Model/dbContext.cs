@@ -22,7 +22,7 @@ namespace BlaBlaApp.Model
             .WithMany(a => a.Cases)
             .Map(m =>
             {
-                m.ToTable("CaseArticle"); // Название промежуточной таблицы
+                m.ToTable("CaseArticle");
                 m.MapLeftKey("CaseId");
                 m.MapRightKey("ArticleId");
             });

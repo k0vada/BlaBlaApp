@@ -30,5 +30,16 @@ namespace BlaBlaApp
             InitializeComponent();
             DataContext = new MainViewModel();
         }
+        private void DataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
+        {
+            if (e.EditAction == DataGridEditAction.Commit)
+            {
+                var vm = (MainViewModel)DataContext;
+                if (vm.EditCaseCommand.CanExecute(null))
+                {
+                    vm.EditCaseCommand.Execute(null);
+                }
+            }
+        }
     }
 }
